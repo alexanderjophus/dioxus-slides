@@ -9,9 +9,12 @@ fn main() {
 
 #[derive(Slidable, Clone)]
 enum Slides {
-    Intro,
-    Second,
-    Final,
+    #[slide("intro")]
+    Intro {},
+    #[slide("second")]
+    Second {},
+    #[slide("final")]
+    Final {},
 }
 
 fn app(cx: Scope) -> Element {

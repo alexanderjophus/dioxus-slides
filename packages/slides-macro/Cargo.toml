@@ -1,6 +1,6 @@
 [package]
 name = "dioxus-slides-macro"
-version = "0.0.0"
+version = "0.0.1"
 authors = ["Alexander Jophus Trelore"]
 edition = "2021"
 description = "A slidable macro library for dioxus-slides"

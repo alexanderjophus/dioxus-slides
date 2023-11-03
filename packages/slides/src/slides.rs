@@ -19,7 +19,7 @@ where
     render! {
         div {
             h1 { "Hello, world!" }
-            p { "This is a slide." }
+            p { "This is a slide!" }
         }
     }
 }
