@@ -1,0 +1,32 @@
+# This is a "virtual package"
+# It is not meant to be published, but is used so "cargo run --example XYZ" works properly
+[package]
+name = "dioxus-slides-examples"
+version = "0.0.0"
+authors = ["Alexander Jophus Trelore"]
+edition = "2021"
+description = "A slides component library for dioxus"
+repository = "https://github.com/alexanderjophus/dioxus-slides"
+license = "MIT OR Apache-2.0"
+keywords = ["ui", "gui", "react", "wasm", "dioxus"]
+categories = ["wasm", "gui", "web-programming"]
+publish = false
+
+[workspace.package]
+version = "0.0.1"
+
+[workspace]
+resolver = "2"
+members = [
+    "packages/slides",
+    "packages/slides-macro",
+]
+
+[workspace.dependencies]
+dioxus-slides = { path = "packages/slides" }
+dioxus-slides-macro = { path = "packages/slides-macro" }
+
+[dev-dependencies]
+dioxus = "0.4.0"
+dioxus-web = "0.4.0"
+dioxus-slides = { workspace = true }
