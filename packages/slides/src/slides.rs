@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use std::{fmt::Display, str::FromStr};
+use std::{fmt::Display, marker::PhantomData, str::FromStr};
 
 /// This trait can be derived using the `#[derive(Slidable)]` macro.
 pub trait Slidable: FromStr + Display + Clone + 'static {
@@ -7,21 +7,25 @@ pub trait Slidable: FromStr + Display + Clone + 'static {
 }
 
 #[derive(Props, PartialEq)]
-pub struct SliderProps {
+pub struct SliderProps<R: Slidable + Clone> {
     #[props(default, into)]
     config: SliderConfig,
+    #[props(default)]
+    phantom: PhantomData<R>,
 }
 
-pub fn Slider<R: Slidable + Clone>(cx: Scope<SliderProps>) -> Element
+pub fn Slider<R: Slidable + Clone>(cx: Scope<SliderProps<R>>) -> Element
 where
     <R as FromStr>::Err: std::fmt::Display,
 {
-    render! {
+    render!(
         div {
             h1 { "Hello, world!" }
-            p { "This is a slide!" }
+            p { "This is a slide." }
         }
-    }
+    )
+    // let slide = cx.state::<R>().unwrap_or_default();
+    // slide.render(cx)
 }
 
 #[derive(Default, PartialEq)]

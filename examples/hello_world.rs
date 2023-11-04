@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use dioxus_slides::prelude::*;
 
 fn main() {
-    dioxus_web::launch(app);
+    dioxus_desktop::launch(app);
 }
 
 #[derive(Slidable, Clone)]
@@ -28,7 +28,7 @@ fn Intro(cx: Scope) -> Element {
         content: render! {
             div {
                 h1 { "Hello, world!" }
-                p { "This is a slide." }
+                p { "This is the first slide." }
             }
         }
     }))
