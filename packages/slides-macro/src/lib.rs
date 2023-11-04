@@ -146,10 +146,7 @@ impl Slide {
         quote! {
             Self::#slide_name {} => {
                 render! {
-                    div {
-                        h1 { "Hello, world!" }
-                        p { "This is a slide!!" }
-                    }
+                    #slide_name {}
                 }
             }
         }
