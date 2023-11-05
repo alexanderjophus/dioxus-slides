@@ -7,18 +7,17 @@ fn main() {
     dioxus_desktop::launch(app);
 }
 
-#[derive(Slidable, Clone)]
+#[derive(Slidable, Clone, Default)]
 enum Slides {
-    Intro {},
-    Second {},
-    Final {},
+    #[default]
+    Intro,
+    Second,
+    Final,
 }
 
 fn app(cx: Scope) -> Element {
     render! {
-        Slider::<Slides> {
-            first_slide: "Intro".to_string(), // find way to derive first slide
-        }
+        Slider::<Slides> {}
     }
 }
 
@@ -30,7 +29,7 @@ fn Intro(cx: Scope) -> Element {
                 p { "This is the first slide." }
             }
         },
-        next: "Second", // find way to derive next slide
+        next: Slides::Second,
     }))
 }
 
@@ -42,12 +41,12 @@ fn Second(cx: Scope) -> Element {
                 p { "This is another slide." }
             }
         },
-        next: "Final",
+        next: Slides::Final,
     }))
 }
 
 fn Final(cx: Scope) -> Element {
-    cx.render(rsx!(Slide {
+    cx.render(rsx!(Slide::<Slides> {
         content: render! {
             div {
                 h1 { "Hello, world!" }

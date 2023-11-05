@@ -8,36 +8,47 @@ pub trait Slidable: FromStr + Display + Clone + 'static {
 
 #[derive(Props, PartialEq)]
 pub struct SliderProps<R: Slidable + Clone> {
-    first_slide: String,
     #[props(default)]
     phantom: PhantomData<R>,
 }
 
-pub fn Slider<R: Slidable + Clone>(cx: Scope<SliderProps<R>>) -> Element
+pub fn Slider<R: Slidable + Clone + Default>(cx: Scope<SliderProps<R>>) -> Element
 where
     <R as FromStr>::Err: std::fmt::Display,
     <R as FromStr>::Err: std::fmt::Debug,
 {
-    let slide = &R::from_str(&cx.props.first_slide).expect("Failed to parse slide name");
-    slide.render(cx)
+    use_shared_state_provider(cx, || R::default());
+    let deck = use_shared_state::<R>(cx).expect("Failed to get shared state");
+    deck.read().render(cx)
 }
 
 #[derive(Props)]
-pub struct SlideProps<'a> {
+pub struct SlideProps<'a, T>
+where
+    T: Slidable + Clone + 'static,
+{
     content: Element<'a>,
-    next: Option<&'a str>,
+    next: Option<T>,
 }
 
-pub fn Slide<'a>(cx: Scope<'a, SlideProps<'a>>) -> Element {
+pub fn Slide<'a, T: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a, T>>) -> Element<'a> {
+    let deck = use_shared_state::<T>(cx).expect("Failed to get shared state");
+
     cx.render(rsx! {
-        &cx.props.content
-        if let Some(next) = cx.props.next {
-            render! {
-                a {
-                    href: next,
-                    "Next"
+        div {
+            cx.props.content.clone()
+        }
+        a {
+            onclick: {
+                let deck = deck.clone();
+                move |_| {
+                    let mut deck = deck.write();
+                    if let Some(next) = cx.props.next.clone() {
+                        *deck = next;
+                    }
                 }
-            }
+            },
+            "next"
         }
     })
 }
