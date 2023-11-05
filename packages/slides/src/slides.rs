@@ -7,48 +7,64 @@ pub trait Slidable: FromStr + Display + Clone + 'static {
 }
 
 #[derive(Props, PartialEq)]
-pub struct SliderProps<R: Slidable + Clone> {
+pub struct SliderProps<S: Slidable + Clone> {
     #[props(default)]
-    phantom: PhantomData<R>,
+    phantom: PhantomData<S>,
 }
 
-pub fn Slider<R: Slidable + Clone + Default>(cx: Scope<SliderProps<R>>) -> Element
+pub fn Slider<S: Slidable + Clone + Default>(cx: Scope<SliderProps<S>>) -> Element
 where
-    <R as FromStr>::Err: std::fmt::Display,
-    <R as FromStr>::Err: std::fmt::Debug,
+    <S as FromStr>::Err: std::fmt::Display,
+    <S as FromStr>::Err: std::fmt::Debug,
 {
-    use_shared_state_provider(cx, || R::default());
-    let deck = use_shared_state::<R>(cx).expect("Failed to get shared state");
+    use_shared_state_provider(cx, || S::default());
+    let deck = use_shared_state::<S>(cx).expect("Failed to get shared state");
     deck.read().render(cx)
 }
 
 #[derive(Props)]
-pub struct SlideProps<'a, T>
+pub struct SlideProps<'a, S>
 where
-    T: Slidable + Clone + 'static,
+    S: Slidable + Clone + 'static,
 {
     content: Element<'a>,
-    next: Option<T>,
+    prev: Option<S>,
+    next: Option<S>,
 }
 
-pub fn Slide<'a, T: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a, T>>) -> Element<'a> {
-    let deck = use_shared_state::<T>(cx).expect("Failed to get shared state");
+pub fn Slide<'a, S: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a, S>>) -> Element<'a> {
+    let deck = use_shared_state::<S>(cx).expect("Failed to get shared state");
 
     cx.render(rsx! {
         div {
-            cx.props.content.clone()
-        }
-        a {
-            onclick: {
-                let deck = deck.clone();
-                move |_| {
-                    let mut deck = deck.write();
-                    if let Some(next) = cx.props.next.clone() {
-                        *deck = next;
+            style: "position: relative; min-height: 100vh; min-width: 100vw;",
+            div {
+                style: "z-index: 0; height: 100%; width: 100%; position: absolute; top: 0; left: 0;",
+                cx.props.content.clone()
+            }
+            if let Some(prev) = cx.props.prev.clone() {
+                render! {
+                    div {
+                        // show on the left side of the screen for 20% of the screen
+                        style: "z-index: 10; height: 100%; width: 20%; position: absolute; top: 0; left: 0;",
+                        onclick: move |_| {
+                            let mut deck = deck.write();
+                            *deck = prev.clone();
+                        }
                     }
                 }
-            },
-            "next"
+            }
+            if let Some(next) = cx.props.next.clone() {
+                render! {
+                    div {
+                        style: "z-index: 10; height: 100%; width: 20%; position: absolute; top: 0; left: 80%;",
+                        onclick: move |_| {
+                            let mut deck = deck.write();
+                            *deck = next.clone();
+                        }
+                    }
+                }
+            }
         }
     })
 }

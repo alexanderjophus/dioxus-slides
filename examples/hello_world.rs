@@ -41,17 +41,19 @@ fn Second(cx: Scope) -> Element {
                 p { "This is another slide." }
             }
         },
+        prev: Slides::Intro,
         next: Slides::Final,
     }))
 }
 
 fn Final(cx: Scope) -> Element {
-    cx.render(rsx!(Slide::<Slides> {
+    cx.render(rsx!(Slide {
         content: render! {
             div {
                 h1 { "Hello, world!" }
                 p { "This is the final slide." }
             }
-        }
+        },
+        prev: Slides::Second,
     }))
 }
