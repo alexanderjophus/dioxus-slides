@@ -29,7 +29,8 @@ fn Intro(cx: Scope) -> Element {
                 h1 { "Hello, world!" }
                 p { "This is the first slide." }
             }
-        }
+        },
+        next: "Second", // find way to derive next slide
     }))
 }
 
@@ -40,7 +41,8 @@ fn Second(cx: Scope) -> Element {
                 h1 { "Hello, world!" }
                 p { "This is another slide." }
             }
-        }
+        },
+        next: "Final",
     }))
 }
 

@@ -25,10 +25,19 @@ where
 #[derive(Props)]
 pub struct SlideProps<'a> {
     content: Element<'a>,
+    next: Option<&'a str>,
 }
 
 pub fn Slide<'a>(cx: Scope<'a, SlideProps<'a>>) -> Element {
     cx.render(rsx! {
         &cx.props.content
+        if let Some(next) = cx.props.next {
+            render! {
+                a {
+                    href: next,
+                    "Next"
+                }
+            }
+        }
     })
 }
