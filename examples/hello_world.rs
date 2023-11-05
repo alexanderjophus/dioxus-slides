@@ -19,7 +19,9 @@ enum Slides {
 
 fn app(cx: Scope) -> Element {
     render! {
-        Slider::<Slides> {}
+        Slider::<Slides> {
+            first_slide: "Intro".to_string(), // find way to define first slide
+        }
     }
 }
 

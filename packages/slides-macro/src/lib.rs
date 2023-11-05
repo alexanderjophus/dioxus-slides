@@ -1,5 +1,5 @@
 use proc_macro::TokenStream;
-use quote::quote;
+use quote::{__private::Span, format_ident, quote};
 use syn::{
     __private::TokenStream2,
     {parse_macro_input, Ident},
@@ -17,6 +17,7 @@ pub fn slidable(input: TokenStream) -> TokenStream {
     let display_impl = slides_enum.impl_display();
     let parse_impl = slides_enum.parse_impl();
     let slidable_impl = slides_enum.slidable_impl();
+    let error_type = slides_enum.error_type();
 
     (quote! {
         #display_impl
@@ -24,6 +25,8 @@ pub fn slidable(input: TokenStream) -> TokenStream {
         #parse_impl
 
         #slidable_impl
+
+        #error_type
     })
     .into()
 }
@@ -83,6 +86,14 @@ impl SlideEnum {
         }
 
         quote! {
+            impl<'a> core::convert::TryFrom<&'a str> for #name {
+                type Error = <Self as std::str::FromStr>::Err;
+
+                fn try_from(s: &'a str) -> Result<Self, Self::Error> {
+                    s.parse()
+                }
+            }
+
             impl std::str::FromStr for #name {
                 type Err = String;
 
@@ -113,6 +124,43 @@ impl SlideEnum {
                         _ => None
                     }
                 }
+            }
+        }
+    }
+
+    fn error_name(&self) -> Ident {
+        Ident::new(&(self.name.to_string() + "MatchError"), Span::call_site())
+    }
+
+    fn error_type(&self) -> TokenStream2 {
+        let match_error_name = self.error_name();
+
+        let mut type_defs = Vec::new();
+        let mut error_variants = Vec::new();
+
+        for slide in &self.slides {
+            let slide_name = &slide.slide_name;
+            let slide_error_ident = format_ident!("{}ParseError", slide_name);
+            // let mut slide_error_variants = Vec::new();
+
+            type_defs.push(quote! {
+                #[allow(non_camel_case_types)]
+                #[derive(Debug, PartialEq)]
+                pub enum #slide_error_ident {}
+            });
+
+            error_variants.push(quote! {
+                #slide_name(#slide_error_ident)
+            });
+        }
+
+        quote! {
+            #(#type_defs)*
+
+            #[allow(non_camel_case_types)]
+            #[derive(Debug, PartialEq)]
+            pub enum #match_error_name {
+                #(#error_variants),*
             }
         }
     }

@@ -8,8 +8,7 @@ pub trait Slidable: FromStr + Display + Clone + 'static {
 
 #[derive(Props, PartialEq)]
 pub struct SliderProps<R: Slidable + Clone> {
-    #[props(default, into)]
-    config: SliderConfig,
+    first_slide: String,
     #[props(default)]
     phantom: PhantomData<R>,
 }
@@ -17,19 +16,11 @@ pub struct SliderProps<R: Slidable + Clone> {
 pub fn Slider<R: Slidable + Clone>(cx: Scope<SliderProps<R>>) -> Element
 where
     <R as FromStr>::Err: std::fmt::Display,
+    <R as FromStr>::Err: std::fmt::Debug,
 {
-    render!(
-        div {
-            h1 { "Hello, world!" }
-            p { "This is a slide." }
-        }
-    )
-    // let slide = cx.state::<R>().unwrap_or_default();
-    // slide.render(cx)
+    let slide = &R::from_str(&cx.props.first_slide).expect("Failed to parse slide name");
+    slide.render(cx)
 }
-
-#[derive(Default, PartialEq)]
-pub struct SliderConfig {}
 
 #[derive(Props)]
 pub struct SlideProps<'a> {
