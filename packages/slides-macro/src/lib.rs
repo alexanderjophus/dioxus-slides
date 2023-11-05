@@ -5,7 +5,7 @@ use syn::{
     {parse_macro_input, Ident},
 };
 
-#[proc_macro_derive(Slidable, attributes(slide))]
+#[proc_macro_derive(Slidable)]
 pub fn slidable(input: TokenStream) -> TokenStream {
     let item_enum = parse_macro_input!(input as syn::ItemEnum);
 
