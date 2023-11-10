@@ -1,3 +1,4 @@
 # Dioxus Slides
 
-I have no idea what I'm doing.
+A simple slideshow component library for use in Dioxus.
+
