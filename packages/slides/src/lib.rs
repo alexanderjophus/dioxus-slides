@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
-mod slides;
-pub use slides::*;
+mod slide;
+pub use slide::*;
 
 pub mod prelude {
     pub use crate::*;
