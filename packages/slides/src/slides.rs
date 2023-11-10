@@ -4,6 +4,8 @@ use std::{fmt::Display, marker::PhantomData, str::FromStr};
 /// This trait can be derived using the `#[derive(Slidable)]` macro.
 pub trait Slidable: FromStr + Display + Clone + 'static {
     fn render<'a>(&self, cx: &'a ScopeState) -> Element<'a>;
+    fn next(&self) -> Option<Self>;
+    fn prev(&self) -> Option<Self>;
 }
 
 #[derive(Props, PartialEq)]
@@ -23,17 +25,15 @@ where
 }
 
 #[derive(Props)]
-pub struct SlideProps<'a, S>
-where
-    S: Slidable + Clone + 'static,
-{
+pub struct SlideProps<'a> {
     content: Element<'a>,
-    prev: Option<S>,
-    next: Option<S>,
 }
 
-pub fn Slide<'a, S: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a, S>>) -> Element<'a> {
+pub fn Slide<'a, S: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a>>) -> Element<'a> {
     let deck = use_shared_state::<S>(cx).expect("Failed to get shared state");
+
+    let prev = deck.read().prev();
+    let next = deck.read().next();
 
     cx.render(rsx! {
         div {
@@ -42,7 +42,7 @@ pub fn Slide<'a, S: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a, S>>
                 style: "z-index: 0; height: 100%; width: 100%; position: absolute; top: 0; left: 0;",
                 cx.props.content.clone()
             }
-            if let Some(prev) = cx.props.prev.clone() {
+            if let Some(prev) = prev.clone() {
                 render! {
                     div {
                         // show on the left side of the screen for 20% of the screen
@@ -54,7 +54,7 @@ pub fn Slide<'a, S: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a, S>>
                     }
                 }
             }
-            if let Some(next) = cx.props.next.clone() {
+            if let Some(next) = next.clone() {
                 render! {
                     div {
                         style: "z-index: 10; height: 100%; width: 20%; position: absolute; top: 0; left: 80%;",

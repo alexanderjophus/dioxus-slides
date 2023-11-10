@@ -14,12 +14,15 @@ pub fn slidable(input: TokenStream) -> TokenStream {
         Err(err) => return err.to_compile_error().into(),
     };
 
+    let ord_impl = slides_enum.ord_impl();
     let display_impl = slides_enum.impl_display();
     let parse_impl = slides_enum.parse_impl();
     let slidable_impl = slides_enum.slidable_impl();
     let error_type = slides_enum.error_type();
 
     (quote! {
+        #ord_impl
+
         #display_impl
 
         #parse_impl
@@ -53,6 +56,49 @@ impl SlideEnum {
         };
 
         Ok(myself)
+    }
+
+    fn ord_impl(&self) -> TokenStream2 {
+        let name = &self.name;
+
+        let mut partial_eq = Vec::new();
+        let mut partial_ord = Vec::new();
+
+        for slide in &self.slides {
+            let slide_name = &slide.slide_name;
+
+            partial_eq.push(quote! {
+                (#name::#slide_name {}, #name::#slide_name {}) => true,
+            });
+        }
+
+        for slide in &self.slides {
+            let slide_name = &slide.slide_name;
+
+            partial_ord.push(quote! {
+                (#name::#slide_name {}, #name::#slide_name {}) => Some(std::cmp::Ordering::Equal),
+            });
+        }
+
+        quote! {
+            impl std::cmp::PartialEq for #name {
+                fn eq(&self, other: &Self) -> bool {
+                    match (self, other) {
+                        #(#partial_eq)*
+                        _ => false
+                    }
+                }
+            }
+
+            impl std::cmp::PartialOrd for #name {
+                fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+                    match (self, other) {
+                        #(#partial_ord)*
+                        _ => None
+                    }
+                }
+            }
+        }
     }
 
     fn impl_display(&self) -> TokenStream2 {
@@ -111,9 +157,50 @@ impl SlideEnum {
         let name = &self.name;
 
         let mut matches = Vec::new();
-        // Collect all routes matches
+        let mut next_tokens = Vec::new();
+        let mut prev_tokens = Vec::new();
+
         for slide in &self.slides {
             matches.push(slide.slidable_match());
+        }
+
+        for (i, slide) in self.slides.iter().enumerate() {
+            let slide_name = &slide.slide_name;
+            let next_slide = match i {
+                x if x + 1 < self.slides.len() => Some(&self.slides[x + 1]),
+                _ => None,
+            };
+            let prev_slide = match i {
+                0 => None,
+                _ => self.slides.get(i - 1),
+            };
+
+            let next = match next_slide {
+                Some(next_slide) => {
+                    let next_slide_name = &next_slide.slide_name;
+                    quote! {
+                        Self::#slide_name {} => Some(Self::#next_slide_name {}),
+                    }
+                }
+                None => quote! {
+                    Self::#slide_name {} => None,
+                },
+            };
+
+            let prev = match prev_slide {
+                Some(prev_slide) => {
+                    let prev_slide_name = &prev_slide.slide_name;
+                    quote! {
+                        Self::#slide_name {} => Some(Self::#prev_slide_name {}),
+                    }
+                }
+                None => quote! {
+                    Self::#slide_name {} => None,
+                },
+            };
+
+            next_tokens.push(next);
+            prev_tokens.push(prev);
         }
 
         quote! {
@@ -121,6 +208,20 @@ impl SlideEnum {
                 fn render<'a>(&self, cx: &'a dioxus::prelude::ScopeState) -> dioxus::prelude::Element<'a> {
                     match self {
                         #(#matches)*
+                        _ => None
+                    }
+                }
+
+                fn next(&self) -> Option<Self> {
+                    match self {
+                        #(#next_tokens)*
+                        _ => None
+                    }
+                }
+
+                fn prev(&self) -> Option<Self> {
+                    match self {
+                        #(#prev_tokens)*
                         _ => None
                     }
                 }

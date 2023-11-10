@@ -22,38 +22,34 @@ fn app(cx: Scope) -> Element {
 }
 
 fn Intro(cx: Scope) -> Element {
-    cx.render(rsx!(Slide {
+    cx.render(rsx!(Slide::<Slides> {
         content: render! {
             div {
                 h1 { "Hello, world!" }
                 p { "This is the first slide." }
             }
         },
-        next: Slides::Second,
     }))
 }
 
 fn Second(cx: Scope) -> Element {
-    cx.render(rsx!(Slide {
+    cx.render(rsx!(Slide::<Slides> {
         content: render! {
             div {
                 h1 { "Hello, world!" }
                 p { "This is another slide." }
             }
         },
-        prev: Slides::Intro,
-        next: Slides::Final,
     }))
 }
 
 fn Final(cx: Scope) -> Element {
-    cx.render(rsx!(Slide {
+    cx.render(rsx!(Slide::<Slides> {
         content: render! {
             div {
                 h1 { "Hello, world!" }
                 p { "This is the final slide." }
             }
         },
-        prev: Slides::Second,
     }))
 }
