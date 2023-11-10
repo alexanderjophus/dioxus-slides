@@ -653,15 +653,15 @@ dependencies = [
 
 [[package]]
 name = "dioxus-slides"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "dioxus",
- "dioxus-slides-macro 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "dioxus-slides-macro",
 ]
 
 [[package]]
 name = "dioxus-slides-examples"
-version = "0.0.0"
+version = "0.0.2"
 dependencies = [
  "dioxus",
  "dioxus-desktop",
@@ -670,17 +670,7 @@ dependencies = [
 
 [[package]]
 name = "dioxus-slides-macro"
-version = "0.0.1"
-dependencies = [
- "quote",
- "syn 2.0.38",
-]
-
-[[package]]
-name = "dioxus-slides-macro"
-version = "0.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e3dbc98c478205dda6579c8b8acd5a7f946b058d6c05f581111e357888a1c8b"
+version = "0.0.2"
 dependencies = [
  "quote",
  "syn 2.0.38",
