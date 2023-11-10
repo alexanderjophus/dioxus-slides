@@ -17,7 +17,12 @@ enum Slides {
 
 fn app(cx: Scope) -> Element {
     render! {
-        Slider::<Slides> {}
+        SlideContainer::<Slides>{
+            width: "100%",
+            height: "100%",
+            background_colour: "#eee",
+            show_slide_no: true,
+        }
     }
 }
 

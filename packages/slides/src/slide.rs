@@ -1,27 +1,13 @@
 use dioxus::prelude::*;
-use std::{fmt::Display, marker::PhantomData, str::FromStr};
+use std::{fmt::Display, str::FromStr};
 
 /// This trait can be derived using the `#[derive(Slidable)]` macro.
 pub trait Slidable: FromStr + Display + Clone + 'static {
     fn render<'a>(&self, cx: &'a ScopeState) -> Element<'a>;
     fn next(&self) -> Option<Self>;
     fn prev(&self) -> Option<Self>;
-}
-
-#[derive(Props, PartialEq)]
-pub struct SliderProps<S: Slidable + Clone> {
-    #[props(default)]
-    phantom: PhantomData<S>,
-}
-
-pub fn Slider<S: Slidable + Clone + Default>(cx: Scope<SliderProps<S>>) -> Element
-where
-    <S as FromStr>::Err: std::fmt::Display,
-    <S as FromStr>::Err: std::fmt::Debug,
-{
-    use_shared_state_provider(cx, || S::default());
-    let deck = use_shared_state::<S>(cx).expect("Failed to get shared state");
-    deck.read().render(cx)
+    fn slide_number(&self) -> usize;
+    fn number_of_slides(&self) -> usize;
 }
 
 #[derive(Props)]

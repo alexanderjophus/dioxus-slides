@@ -159,6 +159,7 @@ impl SlideEnum {
         let mut matches = Vec::new();
         let mut next_tokens = Vec::new();
         let mut prev_tokens = Vec::new();
+        let mut slide_number = Vec::new();
 
         for slide in &self.slides {
             matches.push(slide.slidable_match());
@@ -201,7 +202,15 @@ impl SlideEnum {
 
             next_tokens.push(next);
             prev_tokens.push(prev);
+
+            let number = i + 1;
+
+            slide_number.push(quote! {
+                Self::#slide_name {} => #number,
+            });
         }
+
+        let number_of_slides = slide_number.len();
 
         quote! {
             impl dioxus_slides::Slidable for #name where Self: Clone {
@@ -224,6 +233,17 @@ impl SlideEnum {
                         #(#prev_tokens)*
                         _ => None
                     }
+                }
+
+                fn slide_number(&self) -> usize {
+                    match self {
+                        #(#slide_number)*
+                        _ => 0
+                    }
+                }
+
+                fn number_of_slides(&self) -> usize {
+                    #number_of_slides
                 }
             }
         }
