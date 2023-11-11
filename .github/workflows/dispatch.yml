@@ -1,9 +1,11 @@
-name: Publish to crates.io on tag
+name: Publish to crates.io
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
+    inputs:
+      semver:
+        description: 'Major/minor/patch'     
+        required: true
 
 jobs:
   publish:
@@ -14,7 +16,7 @@ jobs:
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
           override: true
       - name: Install cargo-workspaces
         run: cargo install cargo-workspaces
@@ -26,4 +28,6 @@ jobs:
           args: ${{ secrets.CRATES_TOKEN }}
       - name: Publish to crates.io
         run: |
-          cargo workspaces version -y ${{ GITHUB_REF_NAME }}
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          cargo workspaces publish -y ${{ github.event.inputs.semver }}
