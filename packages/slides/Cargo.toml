@@ -1,6 +1,6 @@
 [package]
 name = "dioxus-slides"
-version = "0.0.2"
+version.workspace = true
 authors = ["Alexander Jophus Trelore"]
 edition = "2021"
 description = "A slides component library for dioxus"
@@ -11,4 +11,4 @@ categories = ["wasm", "gui", "web-programming"]
 
 [dependencies]
 dioxus = "0.4.0"
-dioxus-slides-macro = {workspace = true}
+dioxus-slides-macro.workspace = true
