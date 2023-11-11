@@ -18,6 +18,9 @@ pub struct SlideContainerProps<'a, S: Slidable + Clone> {
 
     #[props(default = false)]
     show_slide_no: bool,
+
+    #[props(default = true)]
+    show_slide_progress_bar: bool,
 }
 
 pub fn SlideContainer<'a, S: Slidable + Clone + Default>(
@@ -33,6 +36,15 @@ where
     cx.render(rsx! {
         div {
             style: "position: relative; min-height: 100vh; min-width: 100vw;",
+            if cx.props.show_slide_progress_bar {
+                render! {
+                    progress {
+                        style: "z-index: 10; position: absolute; top: 0; left: 0; width: 100%;",
+                        max: "{deck.read().number_of_slides().to_string()}",
+                        value: "{deck.read().slide_number().to_string()}",
+                    }
+                }
+            }
             div {
                 style: "z-index: 0; position: absolute; background-color: {cx.props.background_colour}; width: {cx.props.width}; height: {cx.props.height};",
                 deck.read().render(cx)

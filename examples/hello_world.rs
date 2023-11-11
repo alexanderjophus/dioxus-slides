@@ -22,6 +22,7 @@ fn app(cx: Scope) -> Element {
             height: "100%",
             background_colour: "#eee",
             show_slide_no: true,
+            show_slide_progress_bar: true,
         }
     }
 }
