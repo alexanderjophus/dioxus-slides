@@ -46,7 +46,6 @@ impl SlideEnum {
 
         for variant in data.variants {
             let slide_name = variant.ident;
-
             slides.push(Slide { slide_name });
         }
 
