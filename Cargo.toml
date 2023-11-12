@@ -2,7 +2,7 @@
 # It is not meant to be published, but is used so "cargo run --example XYZ" works properly
 [package]
 name = "dioxus-slides-examples"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alexander Jophus Trelore"]
 edition = "2021"
 description = "A slides component library for dioxus"
@@ -13,7 +13,7 @@ categories = ["wasm", "gui", "web-programming"]
 publish = false
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 
 [workspace]
 resolver = "2"
