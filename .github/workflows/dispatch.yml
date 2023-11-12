@@ -4,8 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       semver:
-        description: 'Major/minor/patch'     
+        type: choice
+        description: "Semver version to publish"
         required: true
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   publish:
