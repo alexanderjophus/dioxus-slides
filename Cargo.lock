@@ -653,7 +653,7 @@ dependencies = [
 
 [[package]]
 name = "dioxus-slides"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "dioxus",
  "dioxus-slides-macro",
@@ -661,7 +661,7 @@ dependencies = [
 
 [[package]]
 name = "dioxus-slides-examples"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "dioxus",
  "dioxus-desktop",
@@ -670,7 +670,7 @@ dependencies = [
 
 [[package]]
 name = "dioxus-slides-macro"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "quote",
  "syn 2.0.38",
