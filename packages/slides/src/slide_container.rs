@@ -1,3 +1,5 @@
+use dioxus::events::KeyboardEvent;
+use dioxus::html::input_data::keyboard_types::Key;
 use dioxus::prelude::*;
 use std::{marker::PhantomData, str::FromStr};
 
@@ -21,6 +23,9 @@ pub struct SlideContainerProps<'a, S: Slidable + Clone> {
 
     #[props(default = true)]
     show_slide_progress_bar: bool,
+
+    #[props(default = true)]
+    enable_keyboard_navigation: bool,
 }
 
 pub fn SlideContainer<'a, S: Slidable + Clone + Default>(
@@ -35,7 +40,20 @@ where
 
     cx.render(rsx! {
         div {
-            style: "position: relative; min-height: 100vh; min-width: 100vw;",
+            tabindex: "0",
+            onkeydown: |event: KeyboardEvent| {
+                if cx.props.enable_keyboard_navigation {
+                    let a = match event.key() {
+                        Key::ArrowRight => deck.write().next(),
+                        Key::ArrowLeft => deck.write().prev(),
+                        _ => None,
+                    };
+                    if let Some(a) = a {
+                        *deck.write() = a;
+                    }
+                }
+            },
+            style: "position: relative; min-height: 99vh; min-width: 99vw;",
             if cx.props.show_slide_progress_bar {
                 render! {
                     progress {

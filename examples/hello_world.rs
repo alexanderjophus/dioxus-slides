@@ -23,6 +23,7 @@ fn app(cx: Scope) -> Element {
             background_colour: "#eee",
             show_slide_no: true,
             show_slide_progress_bar: true,
+            enable_keyboard_navigation: true,
         }
     }
 }

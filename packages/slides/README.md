@@ -15,7 +15,7 @@ First, add `dioxus-slides` to your `Cargo.toml`:
 ```toml
 [dependencies]
 dioxus = "0.4.0"
-dioxus-slides = "0.0.2"
+dioxus-slides = "0.1"
 ```
 
 Then, define your slides as an enum and derive the Slidable trait:

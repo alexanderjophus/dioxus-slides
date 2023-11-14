@@ -14,15 +14,12 @@ pub fn slidable(input: TokenStream) -> TokenStream {
         Err(err) => return err.to_compile_error().into(),
     };
 
-    let ord_impl = slides_enum.ord_impl();
     let display_impl = slides_enum.impl_display();
     let parse_impl = slides_enum.parse_impl();
     let slidable_impl = slides_enum.slidable_impl();
     let error_type = slides_enum.error_type();
 
     (quote! {
-        #ord_impl
-
         #display_impl
 
         #parse_impl
@@ -55,49 +52,6 @@ impl SlideEnum {
         };
 
         Ok(myself)
-    }
-
-    fn ord_impl(&self) -> TokenStream2 {
-        let name = &self.name;
-
-        let mut partial_eq = Vec::new();
-        let mut partial_ord = Vec::new();
-
-        for slide in &self.slides {
-            let slide_name = &slide.slide_name;
-
-            partial_eq.push(quote! {
-                (#name::#slide_name {}, #name::#slide_name {}) => true,
-            });
-        }
-
-        for slide in &self.slides {
-            let slide_name = &slide.slide_name;
-
-            partial_ord.push(quote! {
-                (#name::#slide_name {}, #name::#slide_name {}) => Some(std::cmp::Ordering::Equal),
-            });
-        }
-
-        quote! {
-            impl std::cmp::PartialEq for #name {
-                fn eq(&self, other: &Self) -> bool {
-                    match (self, other) {
-                        #(#partial_eq)*
-                        _ => false
-                    }
-                }
-            }
-
-            impl std::cmp::PartialOrd for #name {
-                fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-                    match (self, other) {
-                        #(#partial_ord)*
-                        _ => None
-                    }
-                }
-            }
-        }
     }
 
     fn impl_display(&self) -> TokenStream2 {

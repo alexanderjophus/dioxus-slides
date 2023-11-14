@@ -23,7 +23,7 @@ pub fn Slide<'a, S: Slidable + Clone + 'static>(cx: Scope<'a, SlideProps<'a>>) -
 
     cx.render(rsx! {
         div {
-            style: "position: relative; min-height: 100vh; min-width: 100vw;",
+            style: "position: relative; min-height: 99vh; min-width: 99vw;",
             div {
                 style: "z-index: 0; height: 100%; width: 100%; position: absolute; top: 0; left: 0;",
                 cx.props.content.clone()
